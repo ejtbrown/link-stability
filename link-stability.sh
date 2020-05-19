@@ -20,26 +20,27 @@ fi
 # Handle ctrl-c events
 trap ctrl_c INT
 function ctrl_c() {
+  echo ""
   echo "Finished $(date)"
   if [[ -n "${MIN}" ]]; then
-    echo "Min ping latency: ${MIN}"
-    echo "Max ping latency: ${MAX}"
+    echo "Min ping latency: ${MIN} ms"
+    echo "Max ping latency: ${MAX} ms"
   else
     echo "No min/max latency available"
   fi
 
   if [[ -n "${MIN_UP}" ]]; then
-    echo "Min uptime: ${MIN_UP}"
-    echo "Max uptime: ${MAX_UP}"
-    echo "Avg uptime: $(echo "(${UPS})/${UP_COUNT}" | bc)"
+    echo "Min uptime: ${MIN_UP} seconds"
+    echo "Max uptime: ${MAX_UP} seconds"
+    echo "Avg uptime: $(echo "(${UPS})/${UP_COUNT}" | bc) seconds"
   else
     echo "No uptime stats available"
   fi
 
   if [[ -n "${MIN_DOWN}" ]]; then
-    echo "Min downtime: ${MIN_DOWN}"
-    echo "Max downtime: ${MAX_DOWN}"
-    echo "Avg downtime: $(echo "(${DOWNS})/${DOWN_COUNT}" | bc)"
+    echo "Min downtime: ${MIN_DOWN} seconds"
+    echo "Max downtime: ${MAX_DOWN} seconds"
+    echo "Avg downtime: $(echo "(${DOWNS})/${DOWN_COUNT}" | bc) seconds"
   else
     echo "No downtime stats available"
   fi
@@ -62,11 +63,11 @@ while [[ true ]]; do
       MAX=${LATENCY}
     fi
 
-    if [[ ${MIN} -lt ${LATENCY} ]]; then
+    if [[ ${MIN} -gt ${LATENCY} ]]; then
       MIN=${LATENCY}
     fi
 
-    if [[ ${MAX} -gt ${LATENCY} ]]; then
+    if [[ ${MAX} -lt ${LATENCY} ]]; then
       MAX=${LATENCY}
     fi
   fi
@@ -104,11 +105,11 @@ while [[ true ]]; do
           MIN_UP=${INTERVAL}
           MAX_UP=${INTERVAL}
         else
-          if [[ ${MIN_UP} -lt ${INTERVAL} ]]; then
+          if [[ ${MIN_UP} -gt ${INTERVAL} ]]; then
             MIN_UP=${INTERVAL}
           fi
 
-          if [[ ${MAX_UP} -gt ${INTERVAL} ]]; then
+          if [[ ${MAX_UP} -lt ${INTERVAL} ]]; then
             MAX_UP=${INTERVAL}
           fi
         fi
@@ -132,11 +133,11 @@ while [[ true ]]; do
           MIN_DOWN=${INTERVAL}
           MAX_DOWN=${INTERVAL}
         else
-          if [[ ${MIN_DOWN} -lt ${INTERVAL} ]]; then
+          if [[ ${MIN_DOWN} -gt ${INTERVAL} ]]; then
             MIN_DOWN=${INTERVAL}
           fi
 
-          if [[ ${MAX_DOWN} -gt ${INTERVAL} ]]; then
+          if [[ ${MAX_DOWN} -lt ${INTERVAL} ]]; then
             MAX_DOWN=${INTERVAL}
           fi
         fi
